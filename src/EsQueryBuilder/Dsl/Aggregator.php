@@ -3,6 +3,7 @@
 namespace Sky\EsQueryBuilder\Dsl;
 
 
+use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
 use Sky\EsQueryBuilder\Object;
 
 class Aggregator extends Object
@@ -26,21 +27,21 @@ class Aggregator extends Object
 
     public function metric($type, $field, $val)
     {
-        
+        return $this;   
     }
 
     public function bucket()
     {
-
+        return $this;
     }
 
     public function pipeline()
     {
-        
+        return $this;
     }
 
     public function matrix()
     {
-        
+        return $this;
     }
 }

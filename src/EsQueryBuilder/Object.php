@@ -11,4 +11,9 @@ class Object
     {
         return $this->body;
     }
+
+    public function toJson()
+    {
+        return json_encode($this->body);
+    }
 }

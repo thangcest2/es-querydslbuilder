@@ -1,6 +1,6 @@
 <?php
 
-namespace Sky\EsQueryBuilder\Dsl;
+namespace Sky\EsQueryBuilder\Dsl\TraitLeaf;
 
 
 trait FullTextTrait
@@ -28,6 +28,17 @@ trait FullTextTrait
         return [
             'match_phrase_prefix' => [
                 $field => $val,
+            ]
+        ];
+    }
+
+    public function multiMatch($query, $type = 'best_fields', array $fields = [])
+    {
+        return [
+            'multi_match' => [
+                'query' => $query,
+                'type' => $type,
+                'fields' => $fields,
             ]
         ];
     }

@@ -1,7 +1,8 @@
 <?php
 
-namespace Sky\EsQueryBuilder\Dsl;
+namespace Sky\EsQueryBuilder\Dsl\TraitLeaf;
 
+use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
 
 /**
  * Class TermLevelTrait
@@ -157,5 +158,10 @@ trait TermLevelTrait
         }
 
         return $query;
+    }
+
+    public function getBoolBuilder()
+    {
+        return new BoolBuilder();
     }
 }

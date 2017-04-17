@@ -3,8 +3,9 @@
 namespace Sky\EsQueryBuilder\Dsl;
 
 use Sky\EsQueryBuilder\AbstractBuilder;
-use Sky\EsQueryBuilder\Dsl\Grammars\Compound;
-use Sky\EsQueryBuilder\Dsl\Grammars\FullText;
+use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
+use Sky\EsQueryBuilder\Dsl\TraitLeaf\FullTextTrait;
+use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
 
 /**
  * Class Builder
@@ -22,20 +23,6 @@ class Builder extends AbstractBuilder
     const CONSTANT_SCORE_FILTER = 'filter';
 
     protected $queryBody = [];
-
-    public function selectIndex($indexName)
-    {
-        $this->queryParams['index'] = $indexName;
-
-        return $this;
-    }
-
-    public function selectType($typeName)
-    {
-        $this->queryParams['type'] = $typeName;
-
-        return $this;
-    }
 
     public function constantScoreWithTerm($field, $val)
     {
@@ -150,6 +137,13 @@ class Builder extends AbstractBuilder
         $this->queryBody['bool'][$type][] = [
             $this->match($field, $val),
         ];
+
+        return $this;
+    }
+
+    public function boolWithBool(BoolBuilder $boolBuilder, $type = self::BOOL_MUST)
+    {
+        $this->queryBody['bool'][$type][] = $boolBuilder->toArray();
 
         return $this;
     }

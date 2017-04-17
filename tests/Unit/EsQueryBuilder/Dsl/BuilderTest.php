@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\EsQueryBuilder\Query;
+namespace Tests\Unit\EsQueryBuilder\Dsl;
 
 use PHPUnit\Framework\TestCase;
 
