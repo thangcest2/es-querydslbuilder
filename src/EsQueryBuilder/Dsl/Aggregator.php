@@ -3,12 +3,12 @@
 namespace Sky\EsQueryBuilder\Dsl;
 
 
-use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
+use Sky\EsQueryBuilder\Dsl\LeafLevel\LeafTrait;
 use Sky\EsQueryBuilder\Object;
 
 class Aggregator extends Object
 {
-    use TermLevelTrait;
+    use LeafTrait;
 
     const METRIC_TYPE_AVG = 'avg';
     const METRIC_TYPE_CARDINALITY = 'cardinality';

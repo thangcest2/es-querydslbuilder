@@ -17,11 +17,11 @@ class Demo
             ->setSSLVerification(false)
             ->build();
 
-        $boolBuilder = (new BoolBuilder())
-            ->withBool((new BoolBuilder())
+        $boolBuilder = (new BoolBuilder())->withBool(
+            (new BoolBuilder())
                 ->withPrefix('category.name', 'messy', Builder::BOOL_SHOULD)
                 ->withRegexp('category.name', '.*/.*', Builder::BOOL_MUST_NOT)
-            )->withMatch('name', 'xx', Builder::BOOL_SHOULD);
+        )->withMatch('name', 'xx', Builder::BOOL_SHOULD);
 
         $q = (new Builder($client))
             ->selectIndex('product_my')

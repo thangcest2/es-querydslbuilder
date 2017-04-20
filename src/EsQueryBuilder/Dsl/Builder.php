@@ -4,8 +4,7 @@ namespace Sky\EsQueryBuilder\Dsl;
 
 use Sky\EsQueryBuilder\AbstractBuilder;
 use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
-use Sky\EsQueryBuilder\Dsl\TraitLeaf\FullTextTrait;
-use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
+use Sky\EsQueryBuilder\Dsl\LeafLevel\LeafTrait;
 
 /**
  * Class Builder
@@ -13,7 +12,7 @@ use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
  */
 class Builder extends AbstractBuilder
 {
-    use TermLevelTrait, FullTextTrait;
+    use LeafTrait;
 
     const BOOL_MUST = 'must';
     const BOOL_MUST_NOT = 'must_not';

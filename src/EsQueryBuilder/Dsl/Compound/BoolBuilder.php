@@ -2,13 +2,12 @@
 
 namespace Sky\EsQueryBuilder\Dsl\Compound;
 
-use Sky\EsQueryBuilder\Dsl\TraitLeaf\FullTextTrait;
-use Sky\EsQueryBuilder\Dsl\TraitLeaf\TermLevelTrait;
+use Sky\EsQueryBuilder\Dsl\LeafLevel\LeafTrait;
 use Sky\EsQueryBuilder\Object;
 
 class BoolBuilder extends Object
 {
-    use FullTextTrait, TermLevelTrait;
+    use LeafTrait;
 
     const BOOL_MUST = 'must';
     const BOOL_MUST_NOT = 'must_not';

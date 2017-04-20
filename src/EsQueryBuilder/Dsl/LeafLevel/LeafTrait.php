@@ -1,6 +1,6 @@
 <?php
 
-namespace Sky\EsQueryBuilder\Dsl\TraitLeaf;
+namespace Sky\EsQueryBuilder\Dsl\LeafLevel;
 
 use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
 
@@ -8,7 +8,7 @@ use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
  * Class TermLevelTrait
  * @package Sky\EsQueryBuilder\Dsl
  */
-trait TermLevelTrait
+trait LeafTrait
 {
     /**
      * @param $field
@@ -54,14 +54,13 @@ trait TermLevelTrait
 
     /**
      * @param $field
-     * @param $val
      * @return array
      */
-    public function exists($field, $val)
+    public function exists($field)
     {
         return [
             'exists' => [
-                $field => $val,
+                'field' => $field,
             ]
         ];
     }
@@ -85,10 +84,10 @@ trait TermLevelTrait
      * @param $val
      * @return array
      */
-    public function willcard($field, $val)
+    public function wildcard($field, $val)
     {
         return [
-            'willcard' => [
+            'wildcard' => [
                 $field => $val,
             ]
         ];
@@ -164,4 +163,72 @@ trait TermLevelTrait
     {
         return new BoolBuilder();
     }
+    
+    /*       FULLTEXT      */
+
+    public function match($field, $val)
+    {
+        return [
+            'match' => [
+                $field => $val,
+            ]
+        ];
+    }
+
+    public function matchPhrase($field, $val)
+    {
+        return [
+            'match_phrase' => [
+                $field => $val,
+            ]
+        ];
+    }
+
+    public function matchPhrasePrefix($field, $val)
+    {
+        return [
+            'match_phrase_prefix' => [
+                $field => $val,
+            ]
+        ];
+    }
+
+    public function multiMatch($query, $type = 'best_fields', array $fields = [])
+    {
+        return [
+            'multi_match' => [
+                'query' => $query,
+                'type' => $type,
+                'fields' => $fields,
+            ]
+        ];
+    }
+
+    public function commonTerm($field, $val)
+    {
+        return [
+            'common' => [
+                $field => $val,
+            ]
+        ];
+    }
+
+    public function queryString($field, $val)
+    {
+        return [
+            'query_string' => [
+                $field => $val,
+            ]
+        ];
+    }
+
+    public function simpleQueryString($field, $val)
+    {
+        return [
+            'simple_query_string' => [
+                $field => $val,
+            ]
+        ];
+    }
+
 }
