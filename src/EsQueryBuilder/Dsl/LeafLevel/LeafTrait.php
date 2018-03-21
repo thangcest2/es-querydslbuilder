@@ -11,25 +11,29 @@ use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
 trait LeafTrait
 {
     /**
-     * @param $field
-     * @param $val
-     * @return array
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html
+     *
+     * @param string $field
+     * @param string|array $val
+     * @return $this
      */
-    public function term($field, $val)
+    public function term(string $field, $val)
     {
-        return [
-            'term' => [
-                $field => $val,
-            ]
+        $this->queryBody['term'] = [
+            $field => $val,
         ];
+
+        return $this;
     }
 
     /**
-     * @param $field
-     * @param $val
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html
+     *
+     * @param string $field
+     * @param string|array $val
      * @return array
      */
-    public function terms($field, $val)
+    public function terms(string $field, $val)
     {
         return [
             'terms' => [
@@ -39,11 +43,13 @@ trait LeafTrait
     }
 
     /**
-     * @param $field
-     * @param $val
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+     *
+     * @param string $field
+     * @param string|array $val
      * @return array
      */
-    public function range($field, $val)
+    public function range(string $field, $val)
     {
         return [
             'range' => [
@@ -53,10 +59,12 @@ trait LeafTrait
     }
 
     /**
-     * @param $field
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html
+     *
+     * @param string $field
      * @return array
      */
-    public function exists($field)
+    public function exists(string $field)
     {
         return [
             'exists' => [
@@ -66,11 +74,13 @@ trait LeafTrait
     }
 
     /**
-     * @param $field
-     * @param $val
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html
+     *
+     * @param string $field
+     * @param string|array $val
      * @return array
      */
-    public function prefix($field, $val)
+    public function prefix(string $field, $val)
     {
         return [
             'prefix' => [
@@ -80,36 +90,42 @@ trait LeafTrait
     }
 
     /**
-     * @param $field
-     * @param $val
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html
+     *
+     * @param string $field
+     * @param string|array $val
      * @return array
      */
-    public function wildcard($field, $val)
+    public function wildcard(string $field, $val)
     {
         return [
             'wildcard' => [
                 $field => $val,
-            ]
+            ],
         ];
     }
 
     /**
-     * @param $field
-     * @param $pattern
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html
+     *
+     * @param string $field
+     * @param string|array $pattern
      * @return array
      */
-    public function regexp($field, $pattern)
+    public function regexp(string $field, $pattern)
     {
         return [
             'regexp' => [
                 $field => $pattern,
-            ]
+            ],
         ];
     }
 
     /**
-     * @param $field
-     * @param $val
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html
+     *
+     * @param string $field
+     * @param string|array $val
      * @return array
      */
     public function fuzzy($field, $val)
@@ -117,11 +133,12 @@ trait LeafTrait
         return [
             'fuzzy' => [
                 $field => $val,
-            ]
+            ],
         ];
     }
 
     /**
+     * Find documents of the specified type.
      * Filters documents matching the provided document / mapping type.
      *
      * @param $value
@@ -159,22 +176,56 @@ trait LeafTrait
         return $query;
     }
 
+    /*       COMPOUND - BOOL      */
+
     public function getBoolBuilder()
     {
         return new BoolBuilder();
     }
-    
+
+    /**
+     * @param $isNone bool
+     * @param array $extraParams
+     * @return array
+     */
+    public function matchAll(bool $isNone, array $extraParams = [])
+    {
+        if (!$isNone) {
+            return [
+                'match_all' => $extraParams,
+            ];
+        }
+
+        return [
+            'match_none' => $extraParams,
+        ];
+    }
+
     /*       FULLTEXT      */
 
-    public function match($field, $val)
+    /**
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
+     *
+     * @param string $field
+     * @param string|array $val
+     * @return array
+     */
+    public function match(string $field, $val)
     {
         return [
             'match' => [
                 $field => $val,
-            ]
+            ],
         ];
     }
 
+    /**
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html
+     *
+     * @param string $field
+     * @param string|array $val
+     * @return array
+     */
     public function matchPhrase($field, $val)
     {
         return [
@@ -193,42 +244,67 @@ trait LeafTrait
         ];
     }
 
-    public function multiMatch($query, $type = 'best_fields', array $fields = [])
+    /**
+     * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
+     *
+     * @param $query
+     * @param string $type
+     * @param array $fields, avail: best_fields, most_fields, cross_fields, phrase, phrase_prefix
+     * @param array $extraParams
+     * @return array
+     */
+    public function multiMatch($query, $type = 'best_fields', array $fields = [], $extraParams = [])
     {
+        $mainBody = [
+            'query' => $query,
+            'type' => $type,
+            'fields' => $fields,
+        ];
+        $mainBody += $extraParams;
+
         return [
-            'multi_match' => [
-                'query' => $query,
-                'type' => $type,
-                'fields' => $fields,
-            ]
+            'multi_match' => $mainBody,
         ];
     }
 
-    public function commonTerm($field, $val)
+    /**
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-common-terms-query.html
+     *
+     * @param array $body
+     * @return array
+     */
+    public function commonTerm(array $body)
     {
         return [
             'common' => [
-                $field => $val,
+                'body' => $body,
             ]
         ];
     }
 
-    public function queryString($field, $val)
+    /**
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+     *
+     * @param array $params
+     * @return array
+     */
+    public function queryString(array $params)
     {
         return [
-            'query_string' => [
-                $field => $val,
-            ]
+            'query_string' => $params,
         ];
     }
 
-    public function simpleQueryString($field, $val)
+    /**
+     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html
+     *
+     * @param $params
+     * @return array
+     */
+    public function simpleQueryString(array $params)
     {
         return [
-            'simple_query_string' => [
-                $field => $val,
-            ]
+            'simple_query_string' => $params
         ];
     }
-
 }

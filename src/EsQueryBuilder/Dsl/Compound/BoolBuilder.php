@@ -2,13 +2,10 @@
 
 namespace Sky\EsQueryBuilder\Dsl\Compound;
 
-use Sky\EsQueryBuilder\Dsl\LeafLevel\LeafTrait;
 use Sky\EsQueryBuilder\Object;
 
 class BoolBuilder extends Object
 {
-    use LeafTrait;
-
     const BOOL_MUST = 'must';
     const BOOL_MUST_NOT = 'must_not';
     const BOOL_SHOULD = 'should';
@@ -31,7 +28,9 @@ class BoolBuilder extends Object
     public function withTerm($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->term($field, $val),
+            'term' => [
+                $field => $val,
+            ],
         ];
 
         return $this;
@@ -40,7 +39,9 @@ class BoolBuilder extends Object
     public function withTerms($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->terms($field, $val),
+            'terms' => [
+                $field => $val,
+            ],
         ];
 
         return $this;
@@ -49,16 +50,20 @@ class BoolBuilder extends Object
     public function withRange($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->range($field, $val),
+            'range' => [
+                $field => $val,
+            ],
         ];
 
         return $this;
     }
 
-    public function withExists($field, $val, $type = self::BOOL_MUST)
+    public function withExists($field, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->exists($field, $val),
+            'exists' => [
+                'field' => $field,
+            ],
         ];
 
         return $this;
@@ -67,16 +72,20 @@ class BoolBuilder extends Object
     public function withPrefix($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->prefix($field, $val),
+            'prefix' => [
+                $field => $val,
+            ],
         ];
 
         return $this;
     }
 
-    public function withWillCard($field, $val, $type = self::BOOL_MUST)
+    public function withWildcard($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->willcard($field, $val),
+            'wildcard' => [
+                $field => $val,
+            ],
         ];
 
         return $this;
@@ -85,7 +94,9 @@ class BoolBuilder extends Object
     public function withRegexp($field, $pattern, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->regexp($field, $pattern),
+            'regexp' => [
+                $field => $pattern,
+            ],
         ];
 
         return $this;
@@ -94,7 +105,9 @@ class BoolBuilder extends Object
     public function withMatch($field, $val, $type = self::BOOL_MUST)
     {
         $this->body['bool'][$type][] = [
-            $this->match($field, $val),
+            'match' => [
+                $field => $val,
+            ],
         ];
 
         return $this;

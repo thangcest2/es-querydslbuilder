@@ -5,7 +5,15 @@ require 'vendor/autoload.php';
 use Elasticsearch\ClientBuilder;
 use Sky\EsQueryBuilder\Dsl\Builder;
 use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
-use Sky\EsQueryBuilder\Dsl\Aggregator;
+use Sky\EsQueryBuilder\Dsl\Aggregations\Bucket;
+
+function bucket() {
+    return new Bucket();
+}
+
+function boolBuilder() {
+    return new BoolBuilder();
+}
 
 class Demo
 {
@@ -17,31 +25,60 @@ class Demo
             ->setSSLVerification(false)
             ->build();
 
-        $boolBuilder = (new BoolBuilder())->withBool(
-            (new BoolBuilder())
+        $boolBuilder = boolBuilder()->withBool(
+            boolBuilder()
                 ->withPrefix('category.name', 'messy', Builder::BOOL_SHOULD)
                 ->withRegexp('category.name', '.*/.*', Builder::BOOL_MUST_NOT)
-        )->withMatch('name', 'xx', Builder::BOOL_SHOULD);
+        )->withMatch('name', 'something', Builder::BOOL_SHOULD);
 
-        $q = (new Builder($client))
-            ->selectIndex('product_my')
+//        print_r($boolBuilder);die;
+
+        $q = (new Builder($client));
+        $q->selectIndex('catalog')
             ->selectType('product')
             ->boolWithBool($boolBuilder, Builder::BOOL_SHOULD)
-            ->boolWithTerm('draft.unpublished', 0, Builder::BOOL_SHOULD)
-            ->boolWithTerm('googleSearchVolume', 0)
+            ->boolWithTerm('dob', 0)
             ->boolWithTerm('url', 'health', Builder::BOOL_MUST_NOT)
             ->boolWithMatch('name', 'Health', Builder::BOOL_FILTER);
 
 //        $aggs = (new Aggregator())->metric(Aggregator::METRIC_TYPE_AVG, 'url', []);
 //        $q->withAggregate($aggs);
 
-        print_r($q->exportParamsAsArray());
+        var_dump($q->exportParamsAsArray());
         die;
         $q->run();
 
         print_r($q);
         die;
     }
+
+    public static function runAggs()
+    {
+        $client = ClientBuilder::create()
+            ->setHosts(['http://localhost:9200'])
+            ->setRetries(0)
+            ->setSSLVerification(false)
+            ->build();
+
+        $aggs = bucket()->terms(
+            'store.merchant_id',
+            'groupedStore',
+            ['size' => 100000],
+            bucket()->terms('brand.url', 'brandCount', ['size' => 100000])
+        );
+
+        $q = (new Builder($client));
+        $q->selectIndex('catalog')
+            ->selectType('product')
+            ->term('store.merchant_id', '');
+
+        $q->aggs($aggs);
+
+        $r = $q->run();
+
+        var_dump($r);die;
+    }
 }
 
 Demo::run();
+Demo::runAggs();

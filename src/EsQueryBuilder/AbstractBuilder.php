@@ -3,7 +3,6 @@
 namespace Sky\EsQueryBuilder;
 
 use Elasticsearch\Client;
-use Sky\EsQueryBuilder\Dsl\Aggregator;
 use Sky\EsQueryBuilder\Dsl\Exceptions\NoIndexSelectedException;
 
 abstract class AbstractBuilder implements BuilderInterface
@@ -16,9 +15,9 @@ abstract class AbstractBuilder implements BuilderInterface
         'type' => 'notype',
     ];
 
-    protected $queryBody = [];
+    public $queryBody = [];
 
-    protected $aggsBody = [];
+    public $aggsBody = [];
 
     /**
      * @var Client
@@ -55,6 +54,10 @@ abstract class AbstractBuilder implements BuilderInterface
         if (!isset($this->queryParams['body']['query'])) {
             $this->queryParams['body']['query'] = $this->queryBody;
         }
+//        if (isset($this->queryParams['body']['aggs'])) {
+//            $this->queryParams['body']['size'] = 0;
+//            $this->queryParams['body']['aggs'] = $this->aggsBody;
+//        }
 
         return $this;
     }
@@ -67,13 +70,6 @@ abstract class AbstractBuilder implements BuilderInterface
         if ($excludeFields) {
             $this->queryParams['_source']['excludes'] = $excludeFields;
         }
-
-        return $this;
-    }
-
-    public function withAggregate(Aggregator $aggregator)
-    {
-        $this->queryParams['body']['aggs'] = $aggregator->toArray();
 
         return $this;
     }
@@ -106,7 +102,7 @@ abstract class AbstractBuilder implements BuilderInterface
         return $this->client->search($this->queryParams);
     }
 
-    public function exportParamAsJson()
+    public function exportParamsAsJson()
     {
         $this->buildQuery();
 

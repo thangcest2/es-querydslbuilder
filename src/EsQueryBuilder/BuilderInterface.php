@@ -10,7 +10,7 @@ interface BuilderInterface
     
     public function run();
 
-    public function exportParamAsJson();
+    public function exportParamsAsJson();
 
     public function exportParamsAsArray();
 }

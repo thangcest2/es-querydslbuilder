@@ -3,6 +3,7 @@
 namespace Sky\EsQueryBuilder\Dsl;
 
 use Sky\EsQueryBuilder\AbstractBuilder;
+use Sky\EsQueryBuilder\Dsl\Aggregations\BaseAgg;
 use Sky\EsQueryBuilder\Dsl\Compound\BoolBuilder;
 use Sky\EsQueryBuilder\Dsl\LeafLevel\LeafTrait;
 
@@ -20,8 +21,6 @@ class Builder extends AbstractBuilder
     const BOOL_FILTER = 'filter';
 
     const CONSTANT_SCORE_FILTER = 'filter';
-
-    protected $queryBody = [];
 
     public function constantScoreWithTerm($field, $val)
     {
@@ -50,10 +49,10 @@ class Builder extends AbstractBuilder
         return $this;
     }
 
-    public function constantScoreWithExists($field, $val)
+    public function constantScoreWithExists($field)
     {
         $this->queryBody['constant_score'][self::CONSTANT_SCORE_FILTER][] = [
-            $this->exists($field, $val),
+            $this->exists($field),
         ];
 
         return $this;
@@ -95,10 +94,10 @@ class Builder extends AbstractBuilder
         return $this;
     }
 
-    public function boolWithExists($field, $val, $type = self::BOOL_MUST)
+    public function boolWithExists($field, $type = self::BOOL_MUST)
     {
         $this->queryBody['bool'][$type][] = [
-            $this->exists($field, $val),
+            $this->exists($field),
         ];
 
         return $this;
@@ -116,7 +115,7 @@ class Builder extends AbstractBuilder
     public function boolWithWillCard($field, $val, $type = self::BOOL_MUST)
     {
         $this->queryBody['bool'][$type][] = [
-            $this->willcard($field, $val),
+            $this->wildcard($field, $val),
         ];
 
         return $this;
@@ -143,6 +142,13 @@ class Builder extends AbstractBuilder
     public function boolWithBool(BoolBuilder $boolBuilder, $type = self::BOOL_MUST)
     {
         $this->queryBody['bool'][$type][] = $boolBuilder->toArray();
+
+        return $this;
+    }
+
+    public function aggs(BaseAgg $agg)
+    {
+        $this->aggsBody = $agg->toArray();
 
         return $this;
     }
